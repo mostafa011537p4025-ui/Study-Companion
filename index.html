@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Companion</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b3d2e">
+</head>
+<body>
+
+<!-- ============ تسجيل الدخول / إنشاء حساب ============ -->
+<div id="authView" class="auth" dir="rtl" hidden>
+  <div class="auth-card">
+    <h1>🎓 Study Companion</h1>
+    <p class="sub">رفيقك لتنظيم المذاكرة والمهام والتذكيرات</p>
+
+    <div class="tabs">
+      <button type="button" id="tabLogin" class="tab on" data-tab="login">تسجيل الدخول</button>
+      <button type="button" id="tabRegister" class="tab" data-tab="register">إنشاء حساب</button>
+    </div>
+
+    <form id="authForm" autocomplete="on" novalidate>
+      <label id="nameRow" for="authName" hidden>الاسم
+        <input id="authName" type="text" autocomplete="name" placeholder="اسمك" maxlength="40">
+      </label>
+      <div id="eduRow" hidden>
+       <div class="grid2">
+        <label for="authGrade">الصف
+          <select id="authGrade"><option value="1">الأول الثانوي</option><option value="2">الثاني الثانوي</option><option value="3">الثالث الثانوي</option></select>
+        </label>
+        <label for="authSection">القسم
+          <select id="authSection"><option value="sci">علمي</option><option value="lit">أدبي</option><option value="bac">بكالوريا</option></select>
+        </label>
+       </div>
+        <label for="authMadhhab">مذهبك في الفقه
+          <select id="authMadhhab"><option value="maliki">مالكي</option><option value="hanafi">حنفي</option><option value="shafii">شافعي</option></select>
+        </label>
+      </div>
+      <label for="authEmail">البريد الإلكتروني
+        <input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com" dir="ltr">
+      </label>
+      <label for="authPass">كلمة السر
+        <input id="authPass" type="password" autocomplete="current-password" placeholder="6 أحرف على الأقل" dir="ltr">
+      </label>
+      <p id="authMsg" class="msg" role="alert"></p>
+      <button type="submit" id="authSubmit" class="btn primary wide">دخول</button>
+    </form>
+
+    <p class="note">حسابك وبياناتك محفوظين على هذا الجهاز والمتصفح فقط. لو عايز تنقلهم لجهاز تاني، استخدم «النسخة الاحتياطية» من صفحة حسابي. ومفيش استرجاع لكلمة السر، فاحتفظ بيها.</p>
+  </div>
+</div>
+
+<!-- ============ التطبيق ============ -->
+<div id="appView" class="shell" dir="rtl" hidden>
+  <aside id="sidenav" class="side" aria-label="القائمة الرئيسية">
+    <div class="side-brand"><span class="logo">🎓</span><span>Study Companion</span></div>
+    <nav id="mainNav" class="mainnav">
+      <a href="#home" data-view="home" style="--c:#2fb585"><i class="ni">🏠</i><span>الرئيسية</span></a>
+      <a href="#tasks" data-view="tasks" style="--c:#5aa7ff"><i class="ni">📝</i><span>المهام</span></a>
+      <a href="#study" data-view="study" style="--c:#f2b84b"><i class="ni">🗓</i><span>جدول المذاكرة</span></a>
+      <a href="#focus" data-view="focus" style="--c:#ff7a66"><i class="ni">⏱</i><span>مؤقت التركيز</span></a>
+      <a href="#notes" data-view="notes" style="--c:#8bd17c"><i class="ni">🗒</i><span>ملاحظاتي</span></a>
+      <a href="#books" data-view="books" style="--c:#b18cff"><i class="ni">📚</i><span>الكتب</span></a>
+      <a href="#games" data-view="games" style="--c:#ff8fc8"><i class="ni">🎮</i><span>ألعاب</span></a>
+      <a href="#reminders" data-view="reminders" style="--c:#ffb04d"><i class="ni">⏰</i><span>التذكيرات</span></a>
+      <a href="#stats" data-view="stats" style="--c:#4dd0e1"><i class="ni">📊</i><span>الإحصائيات</span></a>
+      <a href="#account" data-view="account" style="--c:#9fb4a9"><i class="ni">👤</i><span>حسابي</span></a>
+    </nav>
+    <div class="side-foot">
+      <div class="who"><span id="whoName"></span></div>
+      <button type="button" class="btn ghost sm" id="themeBtn" onclick="toggleDarkMode()">🌙 ليلي</button>
+    </div>
+  </aside>
+  <div id="scrim" class="scrim"></div>
+  <div class="content">
+    <header class="topbar">
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="فتح القائمة" aria-expanded="false" aria-controls="sidenav">☰</button>
+      <div class="page-title" id="pageTitle">🎓 Study Companion</div>
+    </header>
+
+  <main>
+
+    <!-- الرئيسية -->
+    <section id="view-home" class="view" hidden>
+      <div id="homeHero"></div>
+      <div id="homeBody"></div>
+    </section>
+
+    <!-- المهام -->
+    <section id="view-tasks" class="view" hidden>
+      <h1>📝 مهامي اليومية</h1>
+      <p class="sub">اكتب مهامك، رتّبها بالأولوية، وحدد موعد تسليمها.</p>
+      <div class="panel">
+        <form id="taskForm" class="row five">
+          <input id="taskInput" type="text" placeholder="اكتب المهمة هنا" maxlength="140" aria-label="المهمة">
+          <select id="taskPriority" aria-label="الأولوية">
+            <option value="2">أولوية متوسطة</option>
+            <option value="3">أولوية عالية</option>
+            <option value="1">أولوية عادية</option>
+          </select>
+          <input id="taskDue" type="date" aria-label="موعد التسليم (اختياري)">
+          <input id="taskDueTime" type="time" aria-label="ساعة التنبيه (اختياري)" title="ساعة التنبيه (اختياري)">
+          <button type="submit" class="btn primary">➕ إضافة</button>
+        </form>
+      </div>
+      <div class="toolbar">
+        <input id="searchTask" type="search" placeholder="🔍 ابحث عن مهمة..." aria-label="بحث">
+        <div class="seg" id="taskFilter">
+          <button type="button" data-f="all" class="on">الكل</button>
+          <button type="button" data-f="active">المتبقية</button>
+          <button type="button" data-f="done">المنجزة</button>
+        </div>
+        <button type="button" class="btn ghost" id="clearDoneBtn">🗑️ حذف المنجزة</button>
+      </div>
+      <p id="taskCount" class="muted"></p>
+      <div id="taskList" class="list"></div>
+    </section>
+
+    <!-- جدول المذاكرة -->
+    <section id="view-study" class="view" hidden>
+      <h1>📚 جدول المذاكرة</h1>
+      <p class="sub">نظّم مذاكرتك يوم بيوم، وغيّر الجدول في أي وقت لو ظروفك اتغيرت.</p>
+      <div class="actions">
+        <button type="button" class="btn primary" id="aiBtn">✨ اعمللي جدول مذاكرة</button>
+        <button type="button" class="btn" id="addSessionBtn">➕ جلسة جديدة</button>
+        <button type="button" class="btn ghost" id="shiftBtn">⏭ رحّل غير المنجز لبكرة</button>
+        <button type="button" class="btn ghost" id="clearBtn">🗑 امسح من الجدول</button>
+      </div>
+      <div id="examBox"></div>
+      <div class="seg big" id="studyTabs">
+        <button type="button" data-t="day" class="on">يومي</button>
+        <button type="button" data-t="week">أسبوعي</button>
+        <button type="button" data-t="month">شهري</button>
+        <button type="button" data-t="year">سنوي</button>
+      </div>
+      <div class="navrow">
+        <button type="button" class="btn ghost sm" id="periodPrev" aria-label="السابق">›</button>
+        <strong id="periodLabel"></strong>
+        <button type="button" class="btn ghost sm" id="periodNext" aria-label="التالي">‹</button>
+        <button type="button" class="btn ghost sm" id="periodToday">النهارده</button>
+      </div>
+      <div id="studyBody"></div>
+      <p id="studyMsg" class="msg" role="status"></p>
+      <button type="button" class="btn sm" id="studyUndo" hidden>↩️ تراجع</button>
+    </section>
+
+    <!-- الألعاب -->
+    <section id="view-games" class="view" hidden>
+      <h1>🎮 ألعاب ذكاء</h1>
+      <p class="sub">استراحة سريعة بين المذاكرة.</p>
+      <div id="gamesBody"></div>
+    </section>
+
+    <!-- ملاحظاتي -->
+    <section id="view-notes" class="view" hidden>
+      <h1>🗒 ملاحظاتي</h1>
+      <p class="sub">سجّل قواعدك وتعريفاتك وأسئلتك، وارجعلها وقت المراجعة.</p>
+      <div id="notesBody"></div>
+    </section>
+
+    <!-- الكتب -->
+    <section id="view-books" class="view" hidden>
+      <h1>📚 الكتب</h1>
+      <p class="sub">كتب صفك من موقع الأزهر، كل صف لوحده، وكتب الوزارة بروابطها المباشرة.</p>
+      <div id="booksBody"></div>
+    </section>
+
+    
+
+    <!-- مؤقت التركيز -->
+    <section id="view-focus" class="view" hidden>
+      <h1>⏱ مؤقت التركيز</h1>
+      <p class="sub">ذاكر بتركيز، وخد راحة قصيرة. بيرن بنغمة لما الوقت يخلص.</p>
+      <div id="focusBody"></div>
+    </section>
+
+    <!-- التذكيرات -->
+    <section id="view-reminders" class="view" hidden>
+      <h1>⏰ التذكيرات</h1>
+      <p class="sub">حدد الموعد، وهتظهرلك رسالة تركيز وقت التذكير.</p>
+      <div class="panel">
+        <form id="remForm" class="row">
+          <input id="reminderText" type="text" placeholder="اكتب التذكير" maxlength="120" aria-label="نص التذكير">
+          <input id="reminderTime" type="datetime-local" aria-label="موعد التذكير">
+          <select id="reminderRepeat" aria-label="التكرار">
+            <option value="none">مرة واحدة</option>
+            <option value="daily">كل يوم</option>
+            <option value="weekly">كل أسبوع</option>
+          </select>
+          <button type="submit" class="btn primary">إضافة تذكير</button>
+        </form>
+        <p id="remMsg" class="msg" role="alert"></p>
+        <p class="muted">التنبيه بيرن بنغمة عالية لحد ما توقفه. بيشتغل لما التطبيق يكون مفتوح (حتى في تبويب تاني أو في الخلفية).
+          <button type="button" class="btn ghost sm" id="testAlertBtn">🔔 جرّب التنبيه</button></p>
+      </div>
+      <div id="reminderList" class="list"></div>
+    </section>
+
+    <!-- الإحصائيات -->
+    <section id="view-stats" class="view" hidden>
+      <h1>📊 الإحصائيات</h1>
+      <p class="sub">تابع تقدمك وإنجازك.</p>
+      <div class="panel">
+        <h2>📈 نسبة الإنجاز</h2>
+        <div class="bar"><div id="progressBar">0%</div></div>
+      </div>
+      <div class="panel" id="weekSummary"></div>
+      <div class="tiles" id="statTiles"></div>
+      <div class="two">
+        <div class="panel">
+          <h2>دقائق المذاكرة المنجزة (آخر ٧ أيام)</h2>
+          <div id="weekChart" class="chart"></div>
+        </div>
+        <div class="panel">
+          <h2>المواد (الدقائق المنجزة)</h2>
+          <div id="subjectChart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- حسابي -->
+    <section id="view-account" class="view" hidden>
+      <h1>👤 حسابي</h1>
+      <div class="two">
+        <div class="panel">
+          <h2>بياناتي</h2>
+          <form id="profileForm">
+            <label for="profName">الاسم
+              <input id="profName" type="text" maxlength="40">
+            </label>
+            <label for="profEmail">البريد الإلكتروني
+              <input id="profEmail" type="email" readonly dir="ltr">
+            </label>
+            <button type="submit" class="btn primary">حفظ الاسم</button>
+          </form>
+          <h2 class="gap">تغيير كلمة السر</h2>
+          <form id="passForm">
+            <label for="passOld">كلمة السر الحالية
+              <input id="passOld" type="password" autocomplete="current-password" dir="ltr">
+            </label>
+            <label for="passNew">كلمة السر الجديدة
+              <input id="passNew" type="password" autocomplete="new-password" dir="ltr" placeholder="6 أحرف على الأقل">
+            </label>
+            <button type="submit" class="btn">تغيير</button>
+          </form>
+          <p id="accMsg" class="msg" role="status"></p>
+        </div>
+        <div class="panel">
+          <h2>🎓 دراستي</h2>
+          <p class="muted">الكتب والمواد والألعاب بتظهر على حسب اختيارك.</p>
+          <div id="eduBox"></div>
+        </div>
+        <div class="panel">
+          <h2>التنبيهات</h2>
+          <label for="setLead">التنبيه قبل بدء جلسة المذاكرة بـ
+            <select id="setLead">
+              <option value="0">بدون</option>
+              <option value="5">٥ دقايق</option>
+              <option value="10">١٠ دقايق</option>
+              <option value="15">١٥ دقيقة</option>
+            </select>
+          </label>
+          <label for="setTaskTime">وقت تنبيه المهام اللي ليها موعد من غير ساعة
+            <input id="setTaskTime" type="time">
+          </label>
+          <label class="check" for="setSound"><input id="setSound" type="checkbox"> صوت التنبيه</label>
+          <label for="setMelody">النغمة
+            <select id="setMelody"></select>
+          </label>
+          <label for="setVolume">مستوى الصوت
+            <select id="setVolume">
+              <option value="high">عالي</option>
+              <option value="mid">متوسط</option>
+            </select>
+          </label>
+          <div class="actions">
+            <button type="button" class="btn" id="melodyBtn">🔊 جرّب النغمة</button>
+            <button type="button" class="btn" id="notifBtn">🔔 فعّل إشعارات الجهاز</button>
+            <button type="button" class="btn ghost" id="notifTestBtn">جرّب إشعار</button>
+            <button type="button" class="btn" id="installBtn" hidden>📲 ثبّت التطبيق</button>
+          </div>
+          <p class="muted" id="notifMsg"></p>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>نسخة احتياطية</h2>
+        <p class="muted">اضغط «إنشاء الكود» واحتفظ بيه. على جهاز تاني: أنشئ حساب، والصق الكود هنا واضغط «استرجاع».</p>
+        <textarea id="backupBox" rows="4" dir="ltr" placeholder="SC1:..." aria-label="كود النسخة الاحتياطية"></textarea>
+        <div class="actions">
+          <button type="button" class="btn" id="backupMake">📋 إنشاء الكود</button>
+          <button type="button" class="btn" id="backupRestore">♻️ استرجاع من الكود</button>
+        </div>
+        <p id="backupMsg" class="msg" role="status"></p>
+      </div>
+      <div class="panel">
+        <div class="actions">
+          <button type="button" class="btn ghost" id="logoutBtn">تسجيل الخروج</button>
+          <button type="button" class="btn danger" id="deleteAccBtn">🗑 حذف حسابي وكل بياناتي</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  </div>
+</div>
+
+<div id="modal" class="modal" hidden><div class="modal-card" id="modalCard" role="dialog" aria-modal="true"></div></div>
+<div id="alertRoot" class="alert-root" hidden></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="js/ui.js"></script>
+<script src="js/store.js"></script>
+<script src="js/edu.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/alerts.js"></script>
+<script src="js/metrics.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/study.js"></script>
+<script src="js/books-data.js"></script>
+<script src="js/moe-books.js"></script>
+<script src="js/mybooks.js"></script>
+<script src="js/books.js"></script>
+<script src="js/reminders.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/games.js"></script>
+<script src="js/focus.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/assistant-local.js"></script>
+<script src="js/assistant.js"></script>
+<script src="js/account.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
